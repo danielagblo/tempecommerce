@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: 244 241 235;
+  --elevated: 252 250 246;
+  --ink: 22 21 19;
+  --muted: 108 101 94;
+  --line: 226 219 208;
+  --signal: 140 78 46;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: 16 16 14;
+  --elevated: 26 25 22;
+  --ink: 244 240 232;
+  --muted: 168 160 148;
+  --line: 46 43 38;
+  --signal: 224 180 138;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: rgb(var(--paper));
+    color: rgb(var(--ink));
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: rgb(var(--ink) / 0.14);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--ink));
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.22em] text-muted;
+  }
+
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn bg-ink text-paper hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply btn border border-line bg-transparent text-ink hover:bg-ink/5;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-line bg-paper px-3.5 py-3 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-ink;
+  }
+}
+
+@keyframes stock-tick {
+  from {
+    transform: translateY(0.4em);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.stock-tick {
+  display: inline-block;
+  animation: stock-tick 280ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
