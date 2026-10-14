@@ -17,7 +17,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/85 backdrop-blur-md">
       <div className="bg-ink px-4 py-2 text-center text-[11px] tracking-wide text-paper sm:text-xs">
-        Tracked shipping from China · Estimated delivery 8–15 business days
+        Oriel dealership · 50% to place the order · 50% when it arrives · 8–15 business days
       </div>
       <Container>
         <div className="flex items-center justify-between gap-3 py-3.5">

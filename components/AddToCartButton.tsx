@@ -10,12 +10,14 @@ export function AddToCartButton({
   className = "",
   label = "Add to cart",
   compactLabel,
+  tone = "secondary",
 }: {
   product: Product;
   quantity?: number;
   className?: string;
   label?: string;
   compactLabel?: string;
+  tone?: "primary" | "secondary";
 }) {
   const { addItem } = useCart();
   const { left } = useLot(product);
@@ -25,7 +27,7 @@ export function AddToCartButton({
   return (
     <button
       type="button"
-      className={`btn-secondary ${className}`}
+      className={`${tone === "primary" ? "btn-primary" : "btn-secondary"} ${className}`}
       disabled={soldOut}
       onClick={() => addItem(lot, quantity)}
     >
