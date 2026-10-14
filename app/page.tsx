@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { FaqList } from "@/components/FaqList";
+import { VendorJoin } from "@/components/VendorJoin";
 import { StockFigure } from "@/components/StockFigure";
 import { PendingOrders } from "@/components/PendingOrders";
 import { ProductCard } from "@/components/ProductCard";
@@ -37,7 +38,7 @@ export default function HomePage() {
       <section className="border-b border-line">
         <Container className="grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-2 lg:gap-16 lg:py-28">
           <div>
-            <p className="eyebrow">Source pricing · No domestic middleman</p>
+            <p className="eyebrow">Workshops and buyers · No domestic middleman</p>
             <h1 className="mt-4 max-w-xl font-serif text-5xl leading-[0.95] tracking-tight sm:text-7xl">
               Direct Import Savings
             </h1>
@@ -47,14 +48,19 @@ export default function HomePage() {
               into the cart.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#shop" className="btn-primary">
-                Shop the edit
+              <a href="#vendors" className="btn-primary">
+                List a workshop
                 <ArrowRight className="h-4 w-4" />
               </a>
-              <Link href="/track" className="btn-secondary">
+              <a href="#shop" className="btn-secondary">
+                Shop the edit
+              </a>
+            </div>
+            <p className="mt-4 text-sm text-muted">
+              <Link href="/track" className="underline-offset-4 hover:text-ink hover:underline">
                 Track an order
               </Link>
-            </div>
+            </p>
             <dl className="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-6">
               <div>
                 <dt className="eyebrow">Window</dt>
@@ -103,6 +109,8 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      <VendorJoin />
 
       <PendingOrders />
 

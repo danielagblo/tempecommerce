@@ -25,6 +25,9 @@ export function Navbar() {
             Oriel
           </Link>
           <nav className="flex items-center gap-4 text-sm sm:gap-6">
+            <Link href="/#vendors" className="hover:opacity-70">
+              Join
+            </Link>
             <Link href="/#shop" className="hover:opacity-70">
               Shop
             </Link>

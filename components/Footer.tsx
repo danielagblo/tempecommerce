@@ -13,6 +13,9 @@ export function Footer() {
           </p>
         </div>
         <nav className="flex gap-5 text-sm">
+          <Link href="/#vendors" className="hover:opacity-70">
+            Workshops
+          </Link>
           <Link href="/#shop" className="hover:opacity-70">
             Shop
           </Link>
