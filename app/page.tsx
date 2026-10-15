@@ -1,241 +1,277 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { AddToCartButton } from "@/components/AddToCartButton";
 import { Container } from "@/components/Container";
 import { FaqList } from "@/components/FaqList";
+import { HomeExplore } from "@/components/HomeExplore";
 import { PendingOrders } from "@/components/PendingOrders";
-import { ProductCard } from "@/components/ProductCard";
+import { SourceRequest } from "@/components/SourceRequest";
 import { StarRating } from "@/components/StarRating";
-import { StockFigure } from "@/components/StockFigure";
 import { VendorJoin } from "@/components/VendorJoin";
-import { seedReviews } from "@/lib/reviews";
-import { formatMoney, savingsPercent, SHIPPING_FLAT } from "@/lib/pricing";
+import { demoOrders } from "@/lib/demo-orders";
+import { formatMoney, SHIPPING_FLAT } from "@/lib/pricing";
 import { products } from "@/lib/products";
-
-const terms = [
-  {
-    index: "01",
-    title: "The house price",
-    copy: "Each piece is priced from the workshop. A typical retail tag sits beside it as a reference, so the amount you keep is visible before you order.",
-  },
-  {
-    index: "02",
-    title: "Half, then half",
-    copy: "Pay 50% on this page to place the order. Pay the other 50% on the tracking page after the status changes to Arrived. The order keeps the last four digits of the card.",
-  },
-  {
-    index: "03",
-    title: "The carton, named",
-    copy: "Packed weight and carton size are on the listing. The $12 shipping line is a published contribution toward tracked line-haul, not a carrier quote.",
-  },
-  {
-    index: "04",
-    title: "A written window",
-    copy: "8–15 business days from the workshop handoff. The tracking number appears when the carrier scans the parcel. If customs charges duty, customs bills you.",
-  },
-];
+import { seedReviews } from "@/lib/reviews";
 
 const quoteIds = ["rv-linen-1", "rv-cups-3", "rv-tote-1"];
 
+function cityOf(origin: string): string {
+  return origin.split(",")[0]?.trim() || origin;
+}
+
+function placeOf(address: string): string {
+  const parts = address.split(",").map((part) => part.trim());
+  return parts[1] || parts[0] || "";
+}
+
+const statusLabel: Record<string, string> = {
+  arrived: "Landed",
+  shipped: "On the way",
+};
+
 export default function HomePage() {
-  const featured = products.find((product) => product.id === "linen-throw") ?? products[0];
-  const saved = featured.compare_at - featured.price;
-  const percent = savingsPercent(featured.price, featured.compare_at);
   const house = products.reduce((sum, product) => sum + product.price, 0);
   const retail = products.reduce((sum, product) => sum + product.compare_at, 0);
   const kept = retail - house;
+  const shots = products.flatMap((product) =>
+    product.images.map((src, index) => ({
+      src,
+      index,
+      product,
+    })),
+  );
+  const landed = demoOrders.filter(
+    (order) => order.status === "arrived" || order.status === "shipped",
+  );
   const quotes = quoteIds
     .map((id) => seedReviews.find((review) => review.id === id))
     .filter((review) => review !== undefined);
+  const hero = [
+    products.find((product) => product.id === "linen-throw"),
+    products.find((product) => product.id === "studio-cups"),
+    products.find((product) => product.id === "woven-leather-tote"),
+  ].filter((product) => product !== undefined);
 
   return (
     <main>
       <section className="border-b border-line">
-        <Container className="grid items-end gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:py-24">
-          <div>
-            <p className="eyebrow">Oriel dealership</p>
+        <Container className="grid items-center gap-10 py-8 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14 lg:py-20">
+          <div className="order-2 lg:order-1">
+            <p className="eyebrow">Oriel sourcing</p>
             <h1 className="mt-4 max-w-xl font-serif text-5xl leading-[0.95] tracking-tight sm:text-7xl">
-              Order at the house price
+              The gallery is the shop.
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-              Four lots from workshops in China. The retail tag, the packed carton, and the day the
-              parcel should arrive are on the page before you pay. Half places the order. Half is
-              due when it arrives.
+            <p className="mt-5 max-w-md text-base leading-relaxed text-muted sm:text-lg">
+              Oriel sources from workshops in China and puts the lot on this page. Open a photo,
+              see the orders that already landed, or ask her to find the next one. Half starts it.
+              The rest is due when your box arrives.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#shop" className="btn-primary">
-                See the floor
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a href="#explore" className="btn-primary">
+                Explore the lots
                 <ArrowRight className="h-4 w-4" />
               </a>
-              <a href="#terms" className="btn-secondary">
-                How an order is paid
+              <a href="#gallery" className="btn-secondary">
+                Open the gallery
               </a>
             </div>
-            <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line pt-6 sm:grid-cols-4">
+            <p className="mt-4 text-sm">
+              <a href="#source" className="underline-offset-4 hover:underline">
+                Ask her to source something
+              </a>
+            </p>
+            <dl className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm">
               <div>
-                <dt className="eyebrow">One of each</dt>
-                <dd className="nums mt-2 font-serif text-3xl tracking-tight">{formatMoney(house)}</dd>
-                <dd className="mt-1 text-xs text-muted">against {formatMoney(retail)}</dd>
+                <dt className="text-muted">Workshops</dt>
+                <dd className="nums font-medium">4 cities</dd>
               </div>
               <div>
-                <dt className="eyebrow">You keep</dt>
-                <dd className="nums mt-2 font-serif text-3xl tracking-tight text-signal">
-                  {formatMoney(kept)}
-                </dd>
-                <dd className="mt-1 text-xs text-muted">before the shipping line</dd>
+                <dt className="text-muted">To start</dt>
+                <dd className="font-medium">Half now</dd>
               </div>
               <div>
-                <dt className="eyebrow">To order</dt>
-                <dd className="mt-2 font-serif text-3xl tracking-tight">50%</dd>
-                <dd className="mt-1 text-xs text-muted">balance on arrival</dd>
+                <dt className="text-muted">Window</dt>
+                <dd className="font-medium">8–15 days, tracked</dd>
               </div>
               <div>
-                <dt className="eyebrow">Window</dt>
-                <dd className="mt-2 font-serif text-3xl tracking-tight">8–15</dd>
-                <dd className="mt-1 text-xs text-muted">business days, tracked</dd>
+                <dt className="text-muted">A full set</dt>
+                <dd className="font-medium text-signal">Keep {formatMoney(kept)}</dd>
               </div>
             </dl>
           </div>
 
-          <div className="overflow-hidden rounded-[28px] border border-line bg-elevated">
-            <div className="relative aspect-[5/4] bg-paper">
-              <Image
-                src={featured.images[0]}
-                alt={featured.title}
-                fill
-                priority
-                sizes="(min-width: 1024px) 45vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="p-5 sm:p-6">
-              <p className="eyebrow">{featured.origin}</p>
-              <h2 className="mt-2 font-serif text-3xl tracking-tight">{featured.title}</h2>
-              <p className="mt-2 text-sm text-muted">
-                {featured.id === "linen-throw"
-                  ? `${featured.material} · open about 140 × 180 cm · ships in oat`
-                  : featured.material}
-              </p>
-              <div className="mt-5 flex items-end justify-between gap-4">
-                <div>
-                  <p className="nums font-serif text-4xl tracking-tight">{formatMoney(featured.price)}</p>
-                  <p className="nums text-sm text-muted line-through">{formatMoney(featured.compare_at)}</p>
-                </div>
-                <p className="text-right text-sm text-signal">
-                  Keep {formatMoney(saved)}
-                  <span className="mt-1 block text-xs">{percent}% under that tag</span>
-                </p>
-              </div>
-              <StockFigure product={featured} />
-              <p className="mt-3 text-xs leading-relaxed text-muted">
-                {featured.weight.toFixed(2)} kg packed · {featured.dimensions} ·{" "}
-                {featured.shipping_time_estimate}
-              </p>
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <AddToCartButton
-                  product={featured}
-                  label="Order this throw"
-                  tone="primary"
-                  className="w-full sm:flex-1"
+          <div className="order-1 grid grid-cols-2 gap-2 sm:gap-3 lg:order-2">
+            {hero.map((product, index) => (
+              <Link
+                key={product.id}
+                href={`/product/${product.id}`}
+                className={`group relative overflow-hidden rounded-[22px] bg-elevated ${
+                  index === 0 ? "col-span-2 aspect-[5/4]" : "aspect-[3/4]"
+                }`}
+              >
+                <Image
+                  src={product.images[0]}
+                  alt={product.title}
+                  fill
+                  priority={index === 0}
+                  sizes={index === 0 ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 24vw, 50vw"}
+                  className="object-cover transition duration-700 group-hover:scale-[1.03]"
                 />
-                <Link href={`/product/${featured.id}`} className="btn-secondary w-full sm:w-auto">
-                  Full listing
-                </Link>
-              </div>
-            </div>
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white sm:p-4">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/80">
+                    {cityOf(product.origin)}
+                  </span>
+                  <span className="mt-1 block font-serif text-lg leading-tight tracking-tight sm:text-2xl">
+                    {product.title}
+                  </span>
+                </span>
+              </Link>
+            ))}
           </div>
         </Container>
       </section>
 
-      <section id="shop" className="scroll-mt-28 border-b border-line">
-        <Container className="py-16 sm:py-24">
-          <div className="flex flex-wrap items-end justify-between gap-6">
+      <section id="gallery" className="scroll-mt-28 border-b border-line">
+        <Container className="py-14 sm:py-20">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="max-w-xl">
-              <p className="eyebrow">The floor sheet</p>
+              <p className="eyebrow">Her gallery</p>
               <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
-                What is on the floor
+                Every photo is a lot she sourced
+              </h2>
+            </div>
+            <p className="max-w-xs text-sm leading-relaxed text-muted">
+              Tap a frame. The listing has the workshop, the carton, and the price next to a typical
+              tag.
+            </p>
+          </div>
+          <ul className="mt-8 columns-2 gap-3 sm:columns-3 sm:gap-4">
+            {shots.map((shot) => (
+              <li key={`${shot.product.id}-${shot.index}`} className="mb-3 break-inside-avoid sm:mb-4">
+                <Link href={`/product/${shot.product.id}`} className="group block">
+                  <span
+                    className={`relative block overflow-hidden rounded-2xl bg-elevated ${
+                      shot.index % 3 === 0 ? "aspect-[3/4]" : shot.index % 3 === 1 ? "aspect-square" : "aspect-[4/5]"
+                    }`}
+                  >
+                    <Image
+                      src={shot.src}
+                      alt={`${shot.product.title}, photo ${shot.index + 1}`}
+                      fill
+                      sizes="(min-width: 640px) 30vw, 50vw"
+                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                    />
+                  </span>
+                  <span className="mt-2 flex items-baseline justify-between gap-2">
+                    <span className="text-sm">{shot.product.title}</span>
+                    <span className="nums text-xs text-muted">{formatMoney(shot.product.price)}</span>
+                  </span>
+                  <span className="mt-0.5 block text-[11px] uppercase tracking-[0.14em] text-muted">
+                    {cityOf(shot.product.origin)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section id="landed" className="scroll-mt-28 border-b border-line bg-elevated">
+        <Container className="py-14 sm:py-20">
+          <div className="max-w-xl">
+            <p className="eyebrow">Orders that made it</p>
+            <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
+              These already left the workshop
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
+              A landed order and one still on a tracking number. Same path yours takes: half to
+              start, the rest when it arrives, then a scan you can look up.
+            </p>
+          </div>
+          <ul className="mt-8 grid gap-4 lg:grid-cols-2">
+            {landed.map((order) => (
+              <li key={order.id} className="rounded-[28px] border border-line bg-paper p-4 sm:p-5">
+                <div className="flex gap-2">
+                  {order.items.map((item) => {
+                    const product = products.find((entry) => entry.id === item.product_id);
+                    if (!product) return null;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={`/product/${product.id}`}
+                        aria-label={product.title}
+                        className="relative h-24 w-20 overflow-hidden rounded-xl bg-elevated sm:h-28 sm:w-24"
+                      >
+                        <Image
+                          src={product.images[0]}
+                          alt={product.title}
+                          fill
+                          sizes="96px"
+                          className="object-cover"
+                        />
+                      </Link>
+                    );
+                  })}
+                </div>
+                <div className="mt-4 flex items-baseline justify-between gap-3">
+                  <p className="font-serif text-2xl tracking-tight">{order.id}</p>
+                  <p className="text-sm text-signal">{statusLabel[order.status] ?? order.status}</p>
+                </div>
+                <p className="mt-1 text-sm text-muted">
+                  {order.customer_name.split(" ")[0]} · {placeOf(order.shipping_address)}
+                </p>
+                <ul className="mt-3 space-y-1 text-sm">
+                  {order.items.map((item) => {
+                    const product = products.find((entry) => entry.id === item.product_id);
+                    return (
+                      <li key={item.id}>
+                        {product?.title ?? item.product_id}
+                        {item.quantity > 1 ? ` × ${item.quantity}` : ""}
+                      </li>
+                    );
+                  })}
+                </ul>
+                {order.tracking_number ? (
+                  <p className="nums mt-3 text-xs text-muted">{order.tracking_number}</p>
+                ) : null}
+                <Link href="/track" className="mt-4 inline-flex text-sm underline-offset-4 hover:underline">
+                  Look this order up
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section id="explore" className="scroll-mt-28 border-b border-line">
+        <Container className="py-14 sm:py-20">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="max-w-xl">
+              <p className="eyebrow">Explore</p>
+              <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
+                Pick a city, open a lot
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-muted">
-              One of each is {formatMoney(house)} at Oriel and {formatMoney(retail)} at a typical
-              retail tag. You keep {formatMoney(kept)}. Tracked shipping is {formatMoney(SHIPPING_FLAT)}{" "}
-              on the order.
+              One of each is {formatMoney(house)} here and {formatMoney(retail)} at a typical tag.
+              You keep {formatMoney(kept)}. Tracked shipping is {formatMoney(SHIPPING_FLAT)}.
             </p>
           </div>
-
-          <ul className="mt-10 divide-y divide-line border-y border-line">
-            {products.map((product) => {
-              const keep = product.compare_at - product.price;
-              return (
-                <li key={product.id}>
-                  <Link
-                    href={`/product/${product.id}`}
-                    className="grid gap-3 py-5 sm:grid-cols-[minmax(0,1.4fr)_auto_auto] sm:items-center sm:gap-8"
-                  >
-                    <span>
-                      <span className="block font-medium">{product.title}</span>
-                      <span className="mt-1 block text-xs text-muted">
-                        {product.origin} · {product.material} · {product.weight.toFixed(2)} kg ·{" "}
-                        {product.dimensions}
-                      </span>
-                    </span>
-                    <span className="flex items-baseline gap-3 sm:block sm:text-right">
-                      <span className="nums text-sm">{formatMoney(product.price)}</span>
-                      <span className="nums text-xs text-muted line-through sm:mt-1 sm:block">
-                        {formatMoney(product.compare_at)}
-                      </span>
-                    </span>
-                    <span className="text-sm text-signal sm:text-right">
-                      Keep {formatMoney(keep)}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-14">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="mt-8">
+            <HomeExplore products={products} />
           </div>
         </Container>
       </section>
 
-      <section id="terms" className="scroll-mt-28 border-b border-line bg-elevated">
-        <Container className="grid gap-12 py-16 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <div>
-            <p className="eyebrow">Before you send the link</p>
-            <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
-              What the buyer is agreeing to
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
-              These four lines are the deal. Nothing about duty, timing, or the second payment is
-              left for a message after checkout.
-            </p>
-          </div>
-          <ol className="divide-y divide-line border-y border-line">
-            {terms.map((term) => (
-              <li key={term.index} className="grid grid-cols-[3rem_1fr] gap-4 py-6">
-                <span className="nums font-serif text-lg text-muted">{term.index}</span>
-                <div>
-                  <p className="font-serif text-2xl tracking-tight">{term.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{term.copy}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </section>
+      <SourceRequest />
 
       <section className="border-b border-line">
-        <Container className="py-16 sm:py-24">
-          <p className="eyebrow">From people who ordered</p>
+        <Container className="py-14 sm:py-20">
+          <p className="eyebrow">From the unbox</p>
           <h2 className="mt-3 max-w-xl font-serif text-4xl tracking-tight sm:text-5xl">
-            The piece arrived as the page described it
+            Notes from people who got the box
           </h2>
-          <ul className="mt-10 grid gap-6 lg:grid-cols-3">
+          <ul className="mt-8 grid gap-4 lg:grid-cols-3">
             {quotes.map((quote) => {
               const product = products.find((item) => item.id === quote.product_id);
               return (
@@ -256,15 +292,15 @@ export default function HomePage() {
       <VendorJoin />
       <PendingOrders />
 
-      <section id="faq" className="scroll-mt-28 py-16 sm:py-24">
+      <section id="faq" className="scroll-mt-28 py-14 sm:py-20">
         <Container>
           <div className="max-w-2xl">
-            <p className="eyebrow">If they ask</p>
+            <p className="eyebrow">Before you send it</p>
             <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
-              The questions that come before an order
+              The questions people ask first
             </h2>
           </div>
-          <div className="mt-10">
+          <div className="mt-8">
             <FaqList />
           </div>
         </Container>

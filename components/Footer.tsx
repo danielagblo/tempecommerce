@@ -8,22 +8,25 @@ export function Footer() {
         <div>
           <p className="font-serif text-2xl tracking-tight">Oriel</p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
-            A direct-import shop for goods made in China. The price, the carton, and the transit
-            window stay on the page.
+            Oriel sources goods from workshops in China. The gallery, the landed orders, and the
+            price stay on the page.
           </p>
         </div>
         <nav className="flex gap-5 text-sm">
-          <Link href="/#vendors" className="hover:opacity-70">
-            Workshops
+          <Link href="/#gallery" className="hover:opacity-70">
+            Gallery
           </Link>
-          <Link href="/#shop" className="hover:opacity-70">
-            Shop
+          <Link href="/#explore" className="hover:opacity-70">
+            Explore
+          </Link>
+          <Link href="/#landed" className="hover:opacity-70">
+            Landed
+          </Link>
+          <Link href="/#source" className="hover:opacity-70">
+            Source
           </Link>
           <Link href="/track" className="hover:opacity-70">
             Track
-          </Link>
-          <Link href="/#faq" className="hover:opacity-70">
-            FAQ
           </Link>
         </nav>
       </Container>

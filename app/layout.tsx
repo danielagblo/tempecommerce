@@ -19,11 +19,11 @@ const sans = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    default: "Oriel — Direct import savings",
+    default: "Oriel — Sourcing from the workshop",
     template: "%s · Oriel",
   },
   description:
-    "Workshop prices from China, with packed weight, carton size, and an 8–15 business day delivery window stated before checkout.",
+    "Oriel sources goods from workshops in China. Browse the gallery, see orders that landed, and pay half to start.",
 };
 
 const themeScript = `(function(){try{var t=localStorage.getItem("oriel-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;

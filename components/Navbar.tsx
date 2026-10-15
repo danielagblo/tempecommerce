@@ -17,7 +17,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/85 backdrop-blur-md">
       <div className="bg-ink px-4 py-2 text-center text-[11px] tracking-wide text-paper sm:text-xs">
-        Oriel dealership · 50% to place the order · 50% when it arrives · 8–15 business days
+        Sourced in China · half to start · half when it lands · 8–15 days
       </div>
       <Container>
         <div className="flex items-center justify-between gap-3 py-3.5">
@@ -25,17 +25,17 @@ export function Navbar() {
             Oriel
           </Link>
           <nav className="flex items-center gap-4 text-sm sm:gap-6">
-            <Link href="/#vendors" className="hover:opacity-70">
-              Join
+            <Link href="/#explore" className="hover:opacity-70">
+              Explore
             </Link>
-            <Link href="/#shop" className="hover:opacity-70">
-              Shop
+            <Link href="/#gallery" className="hover:opacity-70">
+              Gallery
+            </Link>
+            <Link href="/#landed" className="hover:opacity-70">
+              Landed
             </Link>
             <Link href="/track" className="hover:opacity-70">
               Track
-            </Link>
-            <Link href="/#faq" className="hover:opacity-70">
-              FAQ
             </Link>
           </nav>
           <div className="flex items-center">
