@@ -398,7 +398,7 @@ function CartDrawer() {
         ) : items.length === 0 ? (
           <div className="flex flex-1 flex-col items-start justify-center px-5">
             <p className="font-serif text-3xl tracking-tight">Your cart is empty.</p>
-            <Link href="/#shop" className="btn-primary mt-6" onClick={closeCart}>
+            <Link href="/gallery" className="btn-primary mt-6" onClick={closeCart}>
               Shop the edit
             </Link>
           </div>

@@ -19,11 +19,11 @@ const sans = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    default: "Oriel — Sourcing from the workshop",
+    default: "Oriel — What's in right now",
     template: "%s · Oriel",
   },
   description:
-    "Oriel sources goods from workshops in China. Browse the gallery, see orders that landed, and pay half to start.",
+    "Four pieces from workshops in China. Pay half now, and the rest when it shows up.",
 };
 
 const themeScript = `(function(){try{var t=localStorage.getItem("oriel-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;

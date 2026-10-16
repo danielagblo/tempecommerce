@@ -32,15 +32,15 @@ export function SourceRequest() {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (form.want.trim().length < 3) {
-      setError("Say what you want sourced.");
+      setError("Tell her what you want.");
       return;
     }
     if (form.name.trim().length < 2) {
-      setError("Enter your name.");
+      setError("Add your name.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      setError("Enter an email she can reply to.");
+      setError("That email doesn't look right.");
       return;
     }
 
@@ -58,7 +58,7 @@ export function SourceRequest() {
       const next = Array.isArray(existing) ? [request, ...existing] : [request];
       window.localStorage.setItem(KEY, JSON.stringify(next));
     } catch {
-      setError("This browser could not store the request.");
+      setError("Couldn't save that on this phone.");
       return;
     }
 
@@ -68,118 +68,65 @@ export function SourceRequest() {
   }
 
   return (
-    <section id="source" className="scroll-mt-28 border-b border-line bg-elevated">
-      <div className="mx-auto grid w-full max-w-6xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <p className="eyebrow">Use the sourcing</p>
-          <h2 className="mt-3 max-w-md font-serif text-4xl tracking-tight sm:text-5xl">
-            Want something that is not in the gallery yet?
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-            Tell Oriel the piece. She looks for it at the workshop, then the lot shows up here with
-            a photo, a price, and the same half-now, half-when-it-lands deal.
-          </p>
-          <ol className="mt-8 space-y-4 text-sm">
-            <li>
-              <span className="nums text-muted">01</span>
-              <span className="ml-3">You name the piece.</span>
-            </li>
-            <li>
-              <span className="nums text-muted">02</span>
-              <span className="ml-3">Half starts the order on this site.</span>
-            </li>
-            <li>
-              <span className="nums text-muted">03</span>
-              <span className="ml-3">The rest is due when the box lands, 8–15 business days out.</span>
-            </li>
-          </ol>
-        </div>
-
-        <div className="rounded-[28px] border border-line bg-paper p-6 sm:p-8">
-          {sent ? (
-            <div>
-              <p className="eyebrow">Request saved</p>
-              <p className="mt-4 font-serif text-3xl tracking-tight">{sent.want}</p>
-              <p className="mt-4 text-sm leading-relaxed text-muted">
-                {sent.name}
-                {sent.budget ? `, around ${sent.budget}` : ""}. A reply would go to {sent.email}.
-                The request stays on this device until the store database is connected.
+    <section id="source" className="scroll-mt-28 border-t border-line">
+      <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
+        <h2 className="font-serif text-2xl tracking-tight">Want something else?</h2>
+        <p className="mt-2 max-w-md text-sm text-muted">
+          Drop what you&apos;re looking for. She&apos;ll find it, then you pay half to start.
+        </p>
+        {sent ? (
+          <div className="mt-5">
+            <p className="text-sm">
+              Sent: {sent.want}. She&apos;ll get back to you at {sent.email}. It&apos;s saved on this
+              device for now.
+            </p>
+            <button type="button" className="btn-secondary mt-4" onClick={() => setSent(null)}>
+              Send another
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={onSubmit} className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end">
+            <label className="block text-xs text-muted" htmlFor="source-want">
+              What do you want?
+              <input
+                id="source-want"
+                className="field mt-1"
+                value={form.want}
+                onChange={(event) => setField("want", event.target.value)}
+                placeholder="Stoneware bowls"
+              />
+            </label>
+            <label className="block text-xs text-muted" htmlFor="source-name">
+              Name
+              <input
+                id="source-name"
+                className="field mt-1"
+                autoComplete="name"
+                value={form.name}
+                onChange={(event) => setField("name", event.target.value)}
+              />
+            </label>
+            <label className="block text-xs text-muted" htmlFor="source-email">
+              Email
+              <input
+                id="source-email"
+                type="email"
+                className="field mt-1"
+                autoComplete="email"
+                value={form.email}
+                onChange={(event) => setField("email", event.target.value)}
+              />
+            </label>
+            <button type="submit" className="btn-primary sm:mb-0.5">
+              Send
+            </button>
+            {error ? (
+              <p role="alert" className="text-sm text-signal sm:col-span-4">
+                {error}
               </p>
-              <button type="button" className="btn-secondary mt-8" onClick={() => setSent(null)}>
-                Ask for another
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={onSubmit}>
-              <p className="font-serif text-3xl tracking-tight">Ask her to source it</p>
-              <div className="mt-6 space-y-3">
-                <label className="block text-xs text-muted" htmlFor="source-want">
-                  What should she find?
-                  <input
-                    id="source-want"
-                    className="field mt-1"
-                    value={form.want}
-                    onChange={(event) => setField("want", event.target.value)}
-                    placeholder="Stoneware bowls, a small lamp, a linen set"
-                  />
-                </label>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block text-xs text-muted" htmlFor="source-name">
-                    Your name
-                    <input
-                      id="source-name"
-                      className="field mt-1"
-                      autoComplete="name"
-                      value={form.name}
-                      onChange={(event) => setField("name", event.target.value)}
-                    />
-                  </label>
-                  <label className="block text-xs text-muted" htmlFor="source-email">
-                    Email
-                    <input
-                      id="source-email"
-                      type="email"
-                      className="field mt-1"
-                      autoComplete="email"
-                      value={form.email}
-                      onChange={(event) => setField("email", event.target.value)}
-                    />
-                  </label>
-                </div>
-                <label className="block text-xs text-muted" htmlFor="source-budget">
-                  Budget, if you have one
-                  <input
-                    id="source-budget"
-                    className="field mt-1"
-                    value={form.budget}
-                    onChange={(event) => setField("budget", event.target.value)}
-                    placeholder="$80"
-                  />
-                </label>
-                <label className="block text-xs text-muted" htmlFor="source-note">
-                  Anything else
-                  <textarea
-                    id="source-note"
-                    className="field mt-1 min-h-24 resize-y"
-                    value={form.note}
-                    onChange={(event) => setField("note", event.target.value)}
-                  />
-                </label>
-              </div>
-              {error ? (
-                <p role="alert" className="mt-3 text-sm text-signal">
-                  {error}
-                </p>
-              ) : null}
-              <button type="submit" className="btn-primary mt-5 w-full">
-                Send the request
-              </button>
-              <p className="mt-3 text-xs leading-relaxed text-muted">
-                Half to start. Half when it arrives. Tracked shipping is $12 on the order.
-              </p>
-            </form>
-          )}
-        </div>
+            ) : null}
+          </form>
+        )}
       </div>
     </section>
   );

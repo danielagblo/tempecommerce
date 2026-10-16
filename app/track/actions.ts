@@ -1,6 +1,7 @@
 "use server";
 
 import { normalizeOrder } from "@/lib/normalize";
+import { lookupStoredOrder, payStoredBalance, placeStoredOrder } from "@/lib/server/store";
 import { supabase } from "@/lib/supabase";
 import type { Order, PlaceOrderInput, RemoteResult } from "@/lib/types";
 
@@ -8,7 +9,10 @@ export async function lookupRemoteOrder(
   email: string,
   orderId: string,
 ): Promise<RemoteResult<Order>> {
-  if (!supabase) return { ok: false, reason: "unconfigured" };
+  if (!supabase) {
+    const order = await lookupStoredOrder(email, orderId);
+    return order ? { ok: true, order } : { ok: false, reason: "not_found" };
+  }
 
   const { data, error } = await supabase.rpc("lookup_order", {
     p_email: email.trim(),
@@ -24,7 +28,18 @@ export async function lookupRemoteOrder(
 }
 
 export async function placeRemoteOrder(input: PlaceOrderInput): Promise<RemoteResult<Order>> {
-  if (!supabase) return { ok: false, reason: "unconfigured" };
+  if (!supabase) {
+    try {
+      const order = await placeStoredOrder(input);
+      return { ok: true, order };
+    } catch (error) {
+      return {
+        ok: false,
+        reason: "error",
+        message: error instanceof Error ? error.message : "The order could not be saved.",
+      };
+    }
+  }
 
   const { data, error } = await supabase.rpc("place_order", {
     p_id: input.id,
@@ -47,7 +62,18 @@ export async function payRemoteBalance(
   orderId: string,
   last4: string,
 ): Promise<RemoteResult<Order>> {
-  if (!supabase) return { ok: false, reason: "unconfigured" };
+  if (!supabase) {
+    try {
+      const order = await payStoredBalance(email, orderId, last4);
+      return { ok: true, order };
+    } catch (error) {
+      return {
+        ok: false,
+        reason: "error",
+        message: error instanceof Error ? error.message : "The balance could not be saved.",
+      };
+    }
+  }
 
   const { data, error } = await supabase.rpc("pay_balance", {
     p_email: email.trim(),

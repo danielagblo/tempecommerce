@@ -75,6 +75,25 @@ export function getProduct(id: string): Product | undefined {
   return products.find((product) => product.id === id);
 }
 
-export function getRelatedProducts(id: string): Product[] {
-  return products.filter((product) => product.id !== id);
+function provinceOf(origin: string): string {
+  return origin.split(",")[1]?.trim().toLowerCase() ?? "";
+}
+
+export function getSimilarProducts(id: string): Product[] {
+  const current = products.find((product) => product.id === id);
+  if (!current) return [];
+  const province = provinceOf(current.origin);
+  const ranked = products
+    .filter((product) => product.id !== id)
+    .map((product) => {
+      const gap = Math.abs(product.price - current.price) / current.price;
+      let score = 0;
+      if (province && provinceOf(product.origin) === province) score += 3;
+      if (gap <= 0.35) score += 3;
+      else if (gap <= 0.6) score += 1;
+      return { product, score, gap };
+    })
+    .sort((a, b) => b.score - a.score || a.gap - b.gap);
+  const close = ranked.filter((item) => item.score >= 3);
+  return (close.length ? close : ranked.slice(0, 1)).slice(0, 3).map((item) => item.product);
 }

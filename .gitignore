@@ -4,6 +4,8 @@ out
 .vercel
 .env
 .env*.local
+data/store.json
+public/hero-uploads
 *.log
 .DS_Store
 tsconfig.tsbuildinfo

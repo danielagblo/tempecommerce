@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group flex items-center gap-3 sm:flex-col sm:items-stretch">
       <Link href={`/product/${product.id}`} className="flex min-w-0 flex-1 items-center gap-3 sm:block">
-        <div className="relative h-[5.25rem] w-[5.25rem] shrink-0 overflow-hidden rounded-xl bg-elevated sm:aspect-[4/5] sm:h-auto sm:w-auto sm:rounded-2xl">
+        <div className="relative h-[5.25rem] w-[5.25rem] shrink-0 overflow-hidden rounded-xl bg-elevated sm:aspect-square sm:h-auto sm:w-auto sm:rounded-2xl">
           <Image
             src={product.images[0]}
             alt={product.title}

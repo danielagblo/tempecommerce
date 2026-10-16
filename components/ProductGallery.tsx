@@ -9,7 +9,7 @@ export function ProductGallery({ images, title }: { images: string[]; title: str
 
   return (
     <div>
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-elevated sm:aspect-square">
+      <div className="relative aspect-square overflow-hidden rounded-[28px] bg-elevated">
         <Image
           src={current}
           alt={title}

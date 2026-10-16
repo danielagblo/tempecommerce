@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { DeliveryNotice } from "@/components/DeliveryNotice";
-import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
-import { ProductRating, ProductReviews } from "@/components/ProductReviews";
+import { ProductRating } from "@/components/ProductReviews";
 import { PurchasePanel } from "@/components/PurchasePanel";
+import { VideoTestimonials } from "@/components/VideoTestimonials";
 import { formatMoney } from "@/lib/pricing";
-import { getProduct, getRelatedProducts, products } from "@/lib/products";
+import { getProduct, getSimilarProducts, products } from "@/lib/products";
 
 type ProductPageProps = {
   params: { id: string };
@@ -42,8 +43,8 @@ export default function ProductPage({ params }: ProductPageProps) {
     <main className="py-10 sm:py-16">
       <Container>
         <nav className="text-sm text-muted">
-          <Link href="/#shop" className="hover:text-ink">
-            Shop
+          <Link href="/gallery" className="hover:text-ink">
+            Gallery
           </Link>
           <span aria-hidden className="px-2">
             /
@@ -56,9 +57,9 @@ export default function ProductPage({ params }: ProductPageProps) {
           <div>
             <p className="eyebrow">{product.origin}</p>
             <h1 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">{product.title}</h1>
-            <a href="#reviews" className="mt-3 inline-flex hover:opacity-70">
+            <div className="mt-3">
               <ProductRating productId={product.id} starClassName="h-4 w-4" />
-            </a>
+            </div>
             <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-1">
               <p className="nums font-serif text-4xl tracking-tight">{formatMoney(product.price)}</p>
               <p className="nums pb-1 text-sm text-muted line-through">
@@ -93,15 +94,32 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        <ProductReviews productId={product.id} />
+        <VideoTestimonials productId={product.id} />
 
         <section className="mt-20 sm:mt-28">
-          <h2 className="font-serif text-3xl tracking-tight">The rest of the edit</h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
-            {getRelatedProducts(product.id).map((related) => (
-              <ProductCard key={related.id} product={related} />
+          <h2 className="text-center font-serif text-3xl tracking-tight sm:text-4xl">Items</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {getSimilarProducts(product.id).map((related) => (
+              <li key={related.id}>
+                <Link href={`/product/${related.id}`} className="group block">
+                  <span className="relative block aspect-square overflow-hidden rounded-2xl bg-elevated">
+                    <Image
+                      src={related.images[0]}
+                      alt={related.title}
+                      fill
+                      sizes="(min-width: 640px) 30vw, 50vw"
+                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                    />
+                  </span>
+                  <span className="mt-2 block text-sm">{related.title}</span>
+                  <span className="mt-0.5 flex items-baseline justify-between gap-2 text-xs text-muted">
+                    <span>{related.origin.split(",")[0]}</span>
+                    <span className="nums">{formatMoney(related.price)}</span>
+                  </span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       </Container>
     </main>
